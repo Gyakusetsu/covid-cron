@@ -9,14 +9,28 @@ const app = express();
 console.log('Before job instantiation');
 
 const every9AM = '00 00 09 * * *';
-// const every10Seconds = '*/10 * * * * *';
+const every10Seconds = '*/10 * * * * *';
 
 const job = new CronJob(every9AM, async function () {
   let phToday = {};
+
+  await axios.post(process.env.WEBHOOK_URL, {
+    "blocks": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": `Hello <!channel|channel> Please always wash your hands!`
+        }
+      }
+    ]
+  });
+
   await axios.get('https://corona.lmao.ninja/countries/PH')
     .then((result) => {
       phToday = result.data;
     });
+
   await axios.post(process.env.WEBHOOK_URL, {
     "blocks": [
       {
@@ -45,10 +59,12 @@ const job = new CronJob(every9AM, async function () {
   });
 
   let worldToday = {};
+
   await axios.get('https://corona.lmao.ninja/all')
     .then((result) => {
       worldToday = result.data;
     });
+
   await axios.post(process.env.WEBHOOK_URL, {
     "blocks": [
       {
