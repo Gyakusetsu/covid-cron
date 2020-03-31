@@ -10,6 +10,7 @@ console.log('Before job instantiation');
 
 const every9AM = '00 00 09 * * *';
 const every10Seconds = '*/10 * * * * *';
+const every10minutes = '0 */10 * * * *';
 
 const job = new CronJob(every9AM, async function () {
   let phToday = {};
@@ -93,6 +94,17 @@ const job = new CronJob(every9AM, async function () {
 console.log('After job instantiation');
 
 job.start();
+
+app.get('/', (req, res) => {
+  return res.status(200).send(`Healthy Since ${new Date()}`);
+});
+
+const jobAwake = new CronJob(every10minutes, async function () {
+  const result = await axios.get('https://auto-covid-news.herokuapp.com/');
+  console.log(result);
+});
+
+jobAwake.start();
 
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
