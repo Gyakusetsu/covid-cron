@@ -101,7 +101,7 @@ app.get('/', (req, res) => {
 
 const jobAwake = new CronJob(every10minutes, async function () {
   const result = await axios.get('https://auto-covid-news.herokuapp.com/');
-  console.log(result);
+  console.log(result.data);
 });
 
 jobAwake.start();
